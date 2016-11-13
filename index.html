@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Only Real Man Can Survive 5s</title>
+	<link href="main.css" rel="stylesheet" type="text/css" />
+	
+</head>
+
+<body onload="">
+	<header id="header" class="EaselJS" >
+	    <h1 align="center"><span class="text-product" ><strong>Only Real Man Can Survive 15 Seconds</strong></h1>
+	</header>
+	<header id="manual" class="EaselJS">
+	    <h2 style="text-align: center;"> Manual: drag the craft and avoid hit. </h2>
+	</header>
+<div style="margin-left: 30%;margin-right: 30%">
+	
+
+
+
+	<div class="container stopwatch" align="center">
+			<!-- <form> -->
+				<button id="stopwatch-btn-start" >Start</button>
+
+
+			<!-- </form> -->
+			<div class="clock inactive z-depth-1">
+				<h1><span>00.00</span></h1>
+			</div>
+	</div>
+
+	<!-- <div class="canvasHolder"> -->
+		<canvas id="demoCanvas" width="500" height="300" style="background-color: black">
+        <!-- alternate content -->
+    </canvas>
+	</div>
+	<br/>
+	<br/>
+ <div align="center">
+ <h4>Computer Science Department of CSM</h4>
+	<h4>Zhiju Yang</h4>
+	<h4>Peng Li</h4>
+</div>
+</div>
+
+
+
+<script src=" jquery-1.8.3.min.js"></script>
+<script src=" stopwatch.js"></script>
+<script src="http://code.createjs.com/easeljs-0.8.1.min.js"></script>
+
+<script src="preloadjs-NEXT.min.js"></script>
+<script src="soundjs-NEXT.min.js"></script>
+<script type="text/javascript">
+	
+
+var stage;
+var bs;
+var plane;
+var plane2;
+var spriteSheet;
+var bullet_timer;
+var manifest;           // used to register sounds for preloading
+var preload;
+
+var bullet_w = 11;
+var bullet_h = 10;
+var plane_w = 29;
+var plane_h = 32;
+
+// var plane = new createjs.Sprite(spriteSheet, "new_plane");
+// grant.x = stage.canvas.width / 2;
+// grant.y = 22;
+
+var plane_image = new Image();
+plane_image.src = "plane.png";
+
+var bad_plane_image = new Image();
+bad_plane_image.src = "bad_plane.png";
+
+var bullet_image = new Image();
+bullet_image.src = "bullet.png";
+
+function generate_new_plane()
+{
+
+   
+
+
+    plane = new createjs.Shape();
+    // plane.graphics.beginFill("blue").drawCircle(0, 0, 20);
+    plane.graphics.beginBitmapFill(plane_image, "no-repeat").drawRect(0,0,plane_w,plane_h);
+
+
+    // plane = new createjs.Sprite(spriteSheet, "new");
+
+
+    plane.x = stage.canvas.width / 2 - plane_w / 2;
+    plane.y = stage.canvas.height / 2 - plane_h / 2;
+    plane.x_offset = Math.random() * 10 - 5;
+    plane.y_offset = Math.random() * 10 - 5;
+
+
+    plane.on("pressmove",function(evt) {
+                // currentTarget will be the container that the event listener was added to:
+                evt.currentTarget.x = evt.stageX;
+                evt.currentTarget.y = evt.stageY;
+                // make sure to redraw the stage to show the change:
+                stage.update();   
+    });
+
+    // this.document.onkeydown = keyPressed;
+
+
+
+    plane2 = stage.addChild(plane);
+    stage.update();
+}
+
+var L = 37;
+var R = 39;
+var U = 38;
+var D = 40;
+
+function keyPressed(e) 
+{
+    // console.log(e.isComposing);
+    
+}
+
+function generate_new_bullet()
+{
+    var circle = new createjs.Shape();
+    // circle.graphics.beginFill("red").drawCircle(0, 0, 5);
+    circle.graphics.beginBitmapFill(bullet_image, "no-repeat").drawRect(0,0,bullet_w,bullet_h);
+
+    switch (Math.floor(Math.random() * 4 % 4))
+    {
+        case 0:
+        circle.x = 0
+        circle.y = Math.random() * stage.canvas.height;
+        circle.x_offset = 1;
+        circle.y_offset = 0;
+        break;
+        case 1:
+        circle.x = stage.canvas.width;
+        circle.y = Math.random() * stage.canvas.height;
+        circle.x_offset = -1;
+        circle.y_offset = 0;
+        break;
+        case 2:
+        circle.y = 0;
+        circle.x = Math.random() * stage.canvas.width;
+        circle.x_offset = 0;
+        circle.y_offset = 1;
+        break;
+        case 3:
+        circle.y = stage.canvas.height;
+        circle.x = Math.random() * stage.canvas.width;
+        circle.x_offset = 0;
+        circle.y_offset = -1;
+        break;
+    }
+
+    // circle.x = 100;
+    // circle.y = 100;
+    
+    stage.addChild(circle);
+    bs.push(circle);
+    stage.update();
+}
+
+function doneLoading(event) {
+		
+
+		// start the music
+		createjs.Sound.play("music", {interrupt: createjs.Sound.INTERRUPT_NONE, loop: -1, volume: 0.4});
+
+}
+
+function init() 
+{
+	var assetsPath = "sounds/";
+	manifest = [
+			{id: "break", src: "break.ogg", data: 6},
+			{id: "music", src: "music.ogg"}
+		];
+
+		createjs.Sound.alternateExtensions = ["mp3"];
+		preload = new createjs.LoadQueue(true, assetsPath);
+		preload.installPlugin(createjs.Sound);
+		preload.addEventListener("complete", doneLoading); // add an event listener for when load is completed
+		// preload.addEventListener("progress", updateLoading);
+		preload.loadManifest(manifest);
+
+
+
+    stage = new createjs.Stage("demoCanvas");
+    bs = [];
+
+
+    reset();
+
+    generate_new_plane();
+
+bullet_timer = setInterval(function() {
+    generate_new_bullet(); 
+}, 100);
+
+createjs.Ticker.on("tick", bullet_move);
+
+function check_collision(s1, s2)
+{
+    // console.log("x:" + s1.skewX  + " y:" + s2.getBounds());
+    // console.log(s1.y);
+    // console.log(s2.x);
+    // console.log(s2.y);
+
+
+    //s1 bullet
+    //s2 plane
+
+    if (    ( (s1.x + bullet_w > s2.x) && (s1.x + bullet_w < s2.x + plane_w + bullet_w) )   && ( (s1.y + bullet_h > s2.y) && (s1.y + bullet_h < s2.y + plane_h + bullet_h) ) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+function reset()
+{
+	createjs.Ticker.removeAllEventListeners();
+
+    pauseStopwatch();
+
+    clearInterval(bullet_timer);
+
+    createjs.Sound.stop();
+}
+
+function stop()
+{
+	createjs.Ticker.removeAllEventListeners();
+
+    pauseStopwatch();
+
+    clearInterval(bullet_timer);
+
+    createjs.Sound.stop();
+
+    createjs.Sound.play("break", {interrupt: createjs.Sound.INTERRUPT_LATE, offset:0.8});
+
+	plane.graphics.beginBitmapFill(bad_plane_image, "no-repeat").drawRect(0,0,plane_w,plane_h);
+}
+
+function bullet_move()
+{ 
+    // console.log("move"); 
+
+    for (var i = 0; i < bs.length; i++) 
+    {
+
+        var circle = bs[i];
+        if (circle == undefined) return;
+
+        var pt = plane2.localToLocal(0,0,circle);
+
+        // if (circle.hitTest(pt.x, pt.y))
+        if (check_collision(circle, plane))
+        {
+            // console.log("hit");
+
+            // createjs.Ticker.off("tick", bullet_move);
+            stop();
+
+        }
+
+
+
+        // var x_offset = Math.random() * 2 - 1;
+        // var y_offset = Math.random() * 2 - 1;
+
+        circle.x += circle.x_offset * 2;
+        circle.y += circle.y_offset * 2;
+
+        var should_remove = false;
+        if (circle.x > stage.canvas.width) should_remove = true;
+        if (circle.y > stage.canvas.height) should_remove = true;
+        if (circle.x < 0) should_remove = true;
+        if (circle.y < 0) should_remove = true;
+
+        if (should_remove)    
+        {     
+            stage.removeChild(circle);
+            // delete bs[i];
+            bs.splice(i, 1);
+        }
+
+
+    }
+
+    stage.update();
+
+}
+
+}
+
+
+
+</script>
+</body>
+</html>
+
+
+ 
