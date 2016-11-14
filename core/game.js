@@ -36,13 +36,13 @@ function generate_new_plane()
 
     plane.on("pressmove",function(evt) {
                 // currentTarget will be the container that the event listener was added to:
-                evt.currentTarget.x = evt.stageX;
-                evt.currentTarget.y = evt.stageY;
+                evt.currentTarget.x = evt.stageX - plane_w / 2;
+                evt.currentTarget.y = evt.stageY - plane_h / 2;
                 // make sure to redraw the stage to show the change:
                 stage.update();   
     });
 
-    // this.document.onkeydown = keyPressed;
+    this.document.onkeydown = keyPressed;
 
 
 
@@ -57,8 +57,24 @@ var D = 40;
 
 function keyPressed(e) 
 {
-    // console.log(e.isComposing);
-    
+    console.log(e.keyCode);
+
+    switch(e.keyCode)
+    {
+        case U:
+        plane.y-=10;
+        break;
+        case D:
+        plane.y+=10;
+        break;
+        case L:
+        plane.x-=10;
+        break;
+        case R:
+        plane.x+=10;
+        break;
+    }
+    stage.update();
 }
 
 function generate_new_bullet()
