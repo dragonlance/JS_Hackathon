@@ -1,7 +1,6 @@
 var stage;
 var bs;
 var plane;
-var plane2;
 var spriteSheet;
 var bullet_timer;
 var manifest;           // used to register sounds for preloading
@@ -42,11 +41,10 @@ function generate_new_plane()
                 stage.update();   
     });
 
+    stage.addChild(plane);
+
     this.document.onkeydown = keyPressed;
 
-
-
-    plane2 = stage.addChild(plane);
     stage.update();
 }
 
@@ -196,9 +194,6 @@ function bullet_move()
         var circle = bs[i];
         if (circle == undefined) return;
 
-        var pt = plane2.localToLocal(0,0,circle);
-
-        // if (circle.hitTest(pt.x, pt.y))
         if (check_collision(circle, plane))
         {
             // console.log("hit");
@@ -229,3 +224,9 @@ function bullet_move()
 }
 
 }
+
+window.onload = function() {
+    resetStopwatch();
+};
+        
+
