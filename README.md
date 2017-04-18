@@ -1,2 +1,2 @@
-# JS_Hackathon
-JS Hackathon Code
+# JavaScript Shooting Game
+A JavaScript shooting game written in a hackathon.
